@@ -1,0 +1,17 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+kind: UDSBundle
+metadata:
+  name: sampleapp-test
+  description: A UDS bundle for deploying SampleApp and it's dependencies on a development cluster
+  # x-release-please-start-version
+  version: 0.0.1-uds.0
+  # x-release-please-end
+
+packages:
+  - name: sampleapp
+    path: ../
+    # x-release-please-start-version
+    ref: 0.0.1-uds.0
+    # x-release-please-end

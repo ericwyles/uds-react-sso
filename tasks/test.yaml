@@ -1,0 +1,39 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+variables:
+  - name: URL
+    default: https://sampleapp.uds.dev
+
+tasks:
+  - name: all
+    actions:
+      - task: health-check
+      - task: app
+
+  # Ensure application deploys successfully and becomes available
+  - name: health-check
+    actions:
+      - description: SampleApp Deployment Available
+        wait:
+          cluster:
+            kind: Deployment
+            name: sampleapp
+            namespace: sampleapp
+            condition: Available
+
+  - name: app
+    actions:
+      - description: SampleApp Output Check
+        maxRetries: 30
+        cmd: |
+            sleep 1
+            echo "Testing command 'curl -s $URL'"
+            curl_output=$(curl -sv "$URL")
+            echo "$curl_output"
+            if echo "$curl_output" | grep -q "Hello UDS"; then
+              echo "Application is up and running!"
+              exit 0
+            fi
+
+            echo "Application returned unexpected output"
+            exit 1
