@@ -30,7 +30,7 @@ tasks:
             echo "Testing command 'curl -s $URL'"
             curl_output=$(curl -sv "$URL")
             echo "$curl_output"
-            if echo "$curl_output" | grep -q "Hello UDS"; then
+            if echo "$curl_output" | grep -q "You need to enable JavaScript to run this app."; then
               echo "Application is up and running!"
               exit 0
             fi
