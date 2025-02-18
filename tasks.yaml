@@ -57,3 +57,29 @@ tasks:
       - cmd: kubectl delete namespace sampleapp
       - task: create-dev-package
       - task: create-deploy-test-bundle
+
+  - name: test-doug-token
+    actions:
+      - description: test doug token
+        cmd: |
+          response=$(curl -s -X POST "https://sso.uds.dev/realms/uds/protocol/openid-connect/token" \
+              -H "Content-Type: application/x-www-form-urlencoded" \
+              -d "grant_type=password" \
+              -d "client_id=admin-cli" \
+              -d "username=doug" \
+              -d "password=unicorn123!@#UN")
+
+          # Extract Access Token
+          ACCESS_TOKEN=$(echo "$response" | jq -r .access_token)
+
+          # Output the token
+          if [[ "$ACCESS_TOKEN" == "null" || -z "$ACCESS_TOKEN" ]]; then
+              echo "Failed to obtain access token."
+              echo "Response: $response"
+              exit 1
+          else
+              echo "Access Token:"
+              echo "$ACCESS_TOKEN"
+          fi      
+
+          curl -H "Authorization: Bearer $ACCESS_TOKEN" http://localhost:8080/api/userinfo
