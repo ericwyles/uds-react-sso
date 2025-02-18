@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"os"
 	"strings"
 
 	"github.com/MicahParks/keyfunc"
@@ -56,6 +58,11 @@ func parseAndValidateJWT(tokenString string) (map[string]interface{}, error) {
 		return nil, fmt.Errorf("failed to extract issuer: %v", err)
 	}
 
+	// Validate issuer hostname against "sso.$DOMAIN"
+	if err := validateIssuerDomain(issuer); err != nil {
+		return nil, err
+	}
+
 	// Construct JWKS URL
 	jwksURL := fmt.Sprintf("%s/protocol/openid-connect/certs", issuer)
 
@@ -103,6 +110,31 @@ func extractIssuer(tokenString string) (string, error) {
 	}
 
 	return issuer, nil
+}
+
+func validateIssuerDomain(issuer string) error {
+	// Get DOMAIN from environment variable
+	expectedDomain := os.Getenv("DOMAIN")
+	fmt.Printf("expected domain is %s\n", expectedDomain)
+	if expectedDomain == "" {
+		return fmt.Errorf("DOMAIN environment variable is not set")
+	}
+
+	// Parse issuer URL
+	parsedURL, err := url.Parse(issuer)
+	if err != nil {
+		return fmt.Errorf("invalid issuer URL: %v", err)
+	}
+
+	// Expected host format: sso.$DOMAIN
+	expectedHost := "sso." + expectedDomain
+
+	// Check if the issuer's host matches
+	if !strings.EqualFold(parsedURL.Host, expectedHost) {
+		return fmt.Errorf("issuer host mismatch: expected %s, got %s", expectedHost, parsedURL.Host)
+	}
+
+	return nil
 }
 
 // fetchJWKS fetches JWKS from the issuer without caching

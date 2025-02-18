@@ -12,11 +12,8 @@ spec:
       clientId: react-auth
       redirectUris:
         - "https://sampleapp.{{ .Values.domain }}/*"
-      publicClient: true
-      standardFlowEnabled: false
-      attributes:
-        pkce.code.challenge.method: "S256"
-        oauth2.device.authorization.grant.enabled: "true"
+      enableAuthserviceSelector:
+        auth-app: "sampleapp"
   # Customize network policies and expose services via istio
   network:
     expose:

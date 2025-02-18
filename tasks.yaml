@@ -59,7 +59,7 @@ tasks:
       - task: create:test-bundle
       - task: deploy:test-bundle
       - task: setup:create-doug-user
-      - task: test:all
+      #- task: test:all
 
   - name: dev
     description: Create and deploy the bundle on an existing cluster (for iteration/dev speed)

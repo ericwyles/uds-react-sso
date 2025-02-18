@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: "{{ .Values.app.name }}-ui"
+        auth-app: "{{ .Values.app.name }}"
     spec:
       serviceAccountName: {{ .Values.serviceAccountName | default "sampleapp" }}
       containers: 

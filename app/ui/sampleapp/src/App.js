@@ -1,35 +1,33 @@
-import React from "react";
-import { useKeycloak } from "@react-keycloak/web";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
 function App() {
-  const { keycloak, initialized } = useKeycloak();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Ensure authentication is initialized before rendering
-  if (!initialized) {
-    return <p>Loading authentication...</p>;
+  useEffect(() => {
+    fetch("/api/userinfo", { credentials: "include" })  // Ensure cookies are sent
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch user info:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <p>Loading user info...</p>;
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello UDS</p>
-
-        {keycloak.authenticated ? (
-          <>
-            <p>Welcome, {keycloak.tokenParsed?.preferred_username}!</p>
-            <button onClick={() => keycloak.logout()}>Logout</button>
-          </>
-        ) : (
-          <>
-            <button onClick={() => keycloak.login()}>Login</button>
-            <button onClick={() => keycloak.login({ idpHint: "saml" })}>
-              Login with Google
-            </button>
-          </>
-        )}
+        <p>{user ? `Hello, ${user.preferred_username}` : "Not logged in"}</p>
       </header>
     </div>
   );

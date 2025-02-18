@@ -14,12 +14,16 @@ spec:
     metadata:
       labels:
         app: "{{ .Values.app.name }}-api"
+        auth-app: "{{ .Values.app.name }}"
     spec:
       serviceAccountName: {{ .Values.serviceAccountName | default "sampleapp" }}
       containers: 
         - name: "{{ .Values.app.name }}"
           image: "{{ .Values.images.api.repository }}:{{ .Values.images.api.tag }}"
           imagePullPolicy: {{ .Values.images.api.pullPolicy }}
+          env:
+            - name: DOMAIN
+              value: "{{ .Values.domain }}"          
           livenessProbe:
             httpGet:
               path: /api/health
