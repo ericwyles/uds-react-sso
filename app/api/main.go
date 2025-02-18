@@ -15,6 +15,10 @@ import (
 func main() {
 	r := gin.Default()
 
+	r.GET("/api/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "UP"})
+	})
+
 	r.GET("/api/userinfo", func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

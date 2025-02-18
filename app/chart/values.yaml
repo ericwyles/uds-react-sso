@@ -4,10 +4,15 @@
 app:
   name: sampleapp
 
-image:
-  repository: ewyles/sampleapp
-  pullPolicy: IfNotPresent
-  tag: "latest"
+images:
+  ui:
+    repository: ewyles/sampleapp-ui
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  api:
+    repository: ewyles/sampleapp-api
+    pullPolicy: IfNotPresent
+    tag: "latest"
 
 service:
   type: ClusterIP

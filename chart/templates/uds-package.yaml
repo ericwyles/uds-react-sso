@@ -20,9 +20,36 @@ spec:
   # Customize network policies and expose services via istio
   network:
     expose:
-      - service: sampleapp
+      - description: "expose the api"
+        service: sampleapp-api
         podLabels:
-          app: sampleapp
+          app: sampleapp-api
         gateway: tenant
         host: sampleapp
         port: 8080
+        advancedHTTP:
+          match:
+            - name: API Traffic
+              uri:
+                prefix: /api
+      - description: "expose the ui"
+        service: sampleapp-ui
+        podLabels:
+          app: sampleapp-ui
+        gateway: tenant
+        host: sampleapp
+        port: 8080
+        advancedHTTP:
+          match:
+            - name: All other HTTP Traffic
+              uri:
+                prefix: /
+    allow:
+      - direction: Egress
+        remoteNamespace: istio-tenant-gateway
+        remoteSelector:
+          app: tenant-ingressgateway
+        selector:
+          app: sampleapp-api
+        port: 443
+        description: "SSO External"    

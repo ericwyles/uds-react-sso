@@ -15,26 +15,36 @@ includes:
   - publish: https://raw.githubusercontent.com/defenseunicorns/uds-common/v1.8.0/tasks/publish.yaml
 
 variables:
-  - name: IMAGE_TAG
-    default: ewyles/sampleapp:latest
+  - name: UI_IMAGE_TAG
+    default: ewyles/sampleapp-ui:latest
+  - name: API_IMAGE_TAG
+    default: ewyles/sampleapp-api:latest
 
 tasks:
   - name: default
     description: Setup k3d cluster, deploy package
     actions:
-      - task: build-image
+      - task: build-ui-image
+      - task: build-api-image
       - task: create-dev-package
       - task: setup:k3d-test-cluster
         with:
           use_checkpoint: "false"
       - task: create-deploy-test-bundle
 
-  - name: build-image
+  - name: build-ui-image
     actions:
       - description: Build Docker Image
         cmd: |
-          docker build -t "$IMAGE_TAG" ./app/src
-          echo "build image and tagged as $IMAGE_TAG"
+          docker build -t "$UI_IMAGE_TAG" ./app/ui
+          echo "build image and tagged as $UI_IMAGE_TAG"
+
+  - name: build-api-image
+    actions:
+      - description: Build Docker Image
+        cmd: |
+          docker build -t "$API_IMAGE_TAG" ./app/api
+          echo "build image and tagged as $API_IMAGE_TAG"
 
   - name: create-dev-package
     description: Create the package
@@ -55,6 +65,8 @@ tasks:
     description: Create and deploy the bundle on an existing cluster (for iteration/dev speed)
     actions:
       - cmd: kubectl delete namespace sampleapp
+      - task: build-ui-image
+      - task: build-api-image
       - task: create-dev-package
       - task: create-deploy-test-bundle
 
@@ -82,4 +94,4 @@ tasks:
               echo "$ACCESS_TOKEN"
           fi      
 
-          curl -H "Authorization: Bearer $ACCESS_TOKEN" http://localhost:8080/api/userinfo
+          curl -H "Authorization: Bearer $ACCESS_TOKEN" https://sampleapp.uds.dev/api/userinfo

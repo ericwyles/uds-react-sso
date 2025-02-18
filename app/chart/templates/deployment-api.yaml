@@ -4,36 +4,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.app.name }}
+  name: "{{ .Values.app.name }}-api"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Values.app.name }}
+      app: "{{ .Values.app.name }}-api"
   template:
     metadata:
       labels:
-        app: {{ .Values.app.name }}
+        app: "{{ .Values.app.name }}-api"
     spec:
       serviceAccountName: {{ .Values.serviceAccountName | default "sampleapp" }}
       containers: 
-        - name: {{ .Values.app.name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: 80
+        - name: "{{ .Values.app.name }}"
+          image: "{{ .Values.images.api.repository }}:{{ .Values.images.api.tag }}"
+          imagePullPolicy: {{ .Values.images.api.pullPolicy }}
           livenessProbe:
             httpGet:
-              path: /
-              port: 80
+              path: /api/health
+              port: 8080
             initialDelaySeconds: 10
             periodSeconds: 15
             failureThreshold: 3
             timeoutSeconds: 5
           readinessProbe:
             httpGet:
-              path: /
-              port: 80
+              path: /api/health
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
             failureThreshold: 3

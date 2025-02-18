@@ -13,11 +13,19 @@ tasks:
   # Ensure application deploys successfully and becomes available
   - name: health-check
     actions:
-      - description: SampleApp Deployment Available
+      - description: SampleApp UI Deployment Available
         wait:
           cluster:
             kind: Deployment
-            name: sampleapp
+            name: sampleapp-ui
+            namespace: sampleapp
+            condition: Available
+
+      - description: SampleApp API Deployment Available
+        wait:
+          cluster:
+            kind: Deployment
+            name: sampleapp-api
             namespace: sampleapp
             condition: Available
 

@@ -1,0 +1,38 @@
+# Copyright 2024 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.app.name }}-ui"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "{{ .Values.app.name }}-ui"
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.app.name }}-ui"
+    spec:
+      serviceAccountName: {{ .Values.serviceAccountName | default "sampleapp" }}
+      containers: 
+        - name: "{{ .Values.app.name }}"
+          image: "{{ .Values.images.ui.repository }}:{{ .Values.images.ui.tag }}"
+          imagePullPolicy: {{ .Values.images.ui.pullPolicy }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 3

@@ -38,4 +38,5 @@ components:
                 namespace: sampleapp
                 condition: "'{.status.phase}'=Ready"
     images:
-      - ewyles/sampleapp:latest
+      - ewyles/sampleapp-ui:latest
+      - ewyles/sampleapp-api:latest
