@@ -41,12 +41,3 @@ spec:
             - name: All other HTTP Traffic
               uri:
                 prefix: /
-    allow:
-      - direction: Egress
-        remoteNamespace: istio-tenant-gateway
-        remoteSelector:
-          app: tenant-ingressgateway
-        selector:
-          app: sampleapp-api
-        port: 443
-        description: "SSO External"    
