@@ -8,12 +8,24 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   sso:
+    # https://uds.defenseunicorns.com/reference/configuration/single-sign-on/sso-client-validation/
     - name: React App Login
       clientId: react-auth
       redirectUris:
         - "https://sampleapp.{{ .Values.domain }}/*"
-      enableAuthserviceSelector:
-        auth-app: "sampleapp"
+
+      attributes:
+        oidc.ciba.grant.enabled: "false"
+        backchannel.logout.session.required: "true"
+        post.logout.redirect.uris: "https://sampleapp.{{ .Values.domain }}/*"
+        oauth2.device.authorization.grant.enabled: "false"
+        #backchannel.logout.revoke.offline.tokens": "false"   
+
+      secretName: my-react-app-secret
+      secretTemplate:
+        UDS_SSO_CLIENT_ID: "clientField(clientId)"
+        UDS_SSO_CLIENT_SECRET: "clientField(secret)"
+
   # Customize network policies and expose services via istio
   network:
     expose:
