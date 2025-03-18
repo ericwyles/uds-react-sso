@@ -27,9 +27,10 @@ tasks:
       - task: build-ui-image
       - task: build-api-image
       - task: create-dev-package
-      # - task: setup:k3d-test-cluster
-      #   with:
-      #     use_checkpoint: "false"
+      - task: setup:k3d-test-cluster
+        with:
+          use_checkpoint: "false"
+          version: 0.37.0
       - task: create-deploy-test-bundle
 
   - name: build-ui-image

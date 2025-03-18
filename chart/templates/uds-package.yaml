@@ -19,7 +19,7 @@ spec:
         backchannel.logout.session.required: "true"
         post.logout.redirect.uris: "https://sampleapp.{{ .Values.domain }}/*"
         oauth2.device.authorization.grant.enabled: "false"
-        #backchannel.logout.revoke.offline.tokens": "false"   
+        backchannel.logout.revoke.offline.tokens: "false"   
 
       secretName: my-react-app-secret
       secretTemplate:
